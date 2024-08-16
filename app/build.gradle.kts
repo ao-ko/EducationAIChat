@@ -29,6 +29,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+
+
+    //packaging {
+    //    resources.excludes.addAll(
+    //        listOf(
+    //            "META-INF/LICENSE.md",
+    //            "META-INF/LICENSE-notice.md",
+    //            "META-INF/*"
+    //        )
+    //    )
+    //}
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/*"
+        }
+    }
 }
 
 dependencies {
@@ -41,7 +60,9 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation ("com.github.timigod:android-chat-ui:v0.1.4")
+    //implementation ("com.knuddels:jtokkit:1.1.0")
     implementation ("dev.langchain4j:langchain4j-open-ai:0.33.0")
+    implementation ("dev.langchain4j:langchain4j-azure-open-ai:0.33.0")
     implementation ("dev.langchain4j:langchain4j:0.33.0")
 }
 

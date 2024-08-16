@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import co.intentservice.chatui.ChatView;
 import co.intentservice.chatui.models.ChatMessage;
+import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 
 import android.app.Activity;
@@ -28,7 +29,10 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
-    private  OpenAiChatModel openAiChatModel;
+    static String AZURE_OPENAI_KEY = "";
+    static String AZURE_OPENAI_ENDPOINT = "";
+    private OpenAiChatModel openAiChatModel;
+    private AzureOpenAiChatModel azureOpenAiChatModel;
     private ExecutorService executor;
 
     @Override
@@ -59,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             String apiKey = "demo";
                             if (openAiChatModel == null) {
-                                openAiChatModel = OpenAiChatModel.withApiKey(apiKey);
+                                //openAiChatModel = OpenAiChatModel.withApiKey(apiKey);
+                                azureOpenAiChatModel = AzureOpenAiChatModel.builder().apiKey(AZURE_OPENAI_KEY).deploymentName("d1").endpoint(AZURE_OPENAI_ENDPOINT).logRequestsAndResponses(true).build();
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -67,14 +72,14 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                            String answer = openAiChatModel.generate(chatMessage.getMessage());
+                            //String answer = openAiChatModel.generate(chatMessage.getMessage());
+                            String answer = azureOpenAiChatModel.generate(chatMessage.getMessage());
 
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     ChatMessage messageAns = new ChatMessage(answer, new Date().getTime(), ChatMessage.Type.RECEIVED);
                                     chatView.addMessage(messageAns);
-                                    //Toast.makeText(getApplicationContext(), answer, 10 * Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
@@ -83,11 +88,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
             }
-    /*
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-    */
     // Method to start the service
     public void startService(View view) {
         startService(new Intent(getBaseContext(), MyService.class));
