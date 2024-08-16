@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
 
-
                             String apiKey = "demo";
                             if (openAiChatModel == null) {
                                 openAiChatModel = OpenAiChatModel.withApiKey(apiKey);
