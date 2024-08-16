@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 public class MainActivity extends AppCompatActivity {
 
     private  OpenAiChatModel openAiChatModel;
+    private ExecutorService executor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,24 +48,22 @@ public class MainActivity extends AppCompatActivity {
         chatView.addMessage(message1);
         chatView.addMessage(message2);
         Toast.makeText(getApplicationContext(), "start", Toast.LENGTH_LONG).show();
+        executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
         chatView.setOnSentMessageListener(new ChatView.OnSentMessageListener() {
             @Override
             public boolean sendMessage(ChatMessage chatMessage) {
-                if (chatMessage.getMessage().equals("test")) {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Handler handler = new Handler(Looper.getMainLooper());
 
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-
                             String apiKey = "demo";
                             if (openAiChatModel == null) {
                                 openAiChatModel = OpenAiChatModel.withApiKey(apiKey);
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Toast.makeText(getApplicationContext(), "model readky", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "model ready", Toast.LENGTH_LONG).show();
                                     }
                                 });
                             }
@@ -74,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     ChatMessage messageAns = new ChatMessage(answer, new Date().getTime(), ChatMessage.Type.RECEIVED);
+                                    chatView.addMessage(messageAns);
                                     //Toast.makeText(getApplicationContext(), answer, 10 * Toast.LENGTH_LONG).show();
                                 }
                             });
                         }
                     });
-                }
                 return true;
             }
         });
