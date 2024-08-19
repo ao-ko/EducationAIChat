@@ -10,7 +10,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import co.intentservice.chatui.ChatView;
 import co.intentservice.chatui.models.ChatMessage;
+import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.SystemMessage;
 
 import android.app.Activity;
 import android.os.Handler;
@@ -30,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
     private  OpenAiChatModel openAiChatModel;
     private ExecutorService executor;
+    private ChatMemory chatMemory;
+
+    interface Assistant {
+
+        @SystemMessage("")
+        String chat(String message);
+    }
+    private Assistant assistant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +70,16 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             String apiKey = "demo";
-                            if (openAiChatModel == null) {
+
+                            if (chatMemory == null) {
+                                chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+                            }
+                            if (assistant == null) {
                                 openAiChatModel = OpenAiChatModel.withApiKey(apiKey);
+                                assistant = AiServices.builder(Assistant.class)
+                                        .chatLanguageModel(OpenAiChatModel.withApiKey(apiKey))
+                                        .chatMemory(chatMemory)
+                                        .build();
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -67,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                            String answer = openAiChatModel.generate(chatMessage.getMessage());
+                            String answer = assistant.chat(chatMessage.getMessage());
 
                             handler.post(new Runnable() {
                                 @Override
