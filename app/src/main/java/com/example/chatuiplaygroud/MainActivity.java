@@ -10,6 +10,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import co.intentservice.chatui.ChatView;
 import co.intentservice.chatui.models.ChatMessage;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 
 import android.app.Activity;
@@ -21,7 +23,9 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -41,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        /*Toast.makeText(this, "service is on", Toast.LENGTH_LONG).show();*/
         ChatView chatView = (ChatView) findViewById(R.id.chat_view);
+        List<dev.langchain4j.data.message.ChatMessage> messageList = new ArrayList<>();
         ChatMessage message1 = new ChatMessage("msg1", 12345678, ChatMessage.Type.SENT);
         ChatMessage message2 = new ChatMessage("msg12", 12345679, ChatMessage.Type.RECEIVED);
         chatView.addMessage(message1);
@@ -67,12 +71,14 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                             }
-                            String answer = openAiChatModel.generate(chatMessage.getMessage());
+                            messageList.add(UserMessage.from(chatMessage.getMessage()));
+                            AiMessage aiMessage = openAiChatModel.generate(messageList).content();
+                            messageList.add(aiMessage);
 
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    ChatMessage messageAns = new ChatMessage(answer, new Date().getTime(), ChatMessage.Type.RECEIVED);
+                                    ChatMessage messageAns = new ChatMessage(aiMessage.text(), new Date().getTime(), ChatMessage.Type.RECEIVED);
                                     chatView.addMessage(messageAns);
                                     //Toast.makeText(getApplicationContext(), answer, 10 * Toast.LENGTH_LONG).show();
                                 }
@@ -83,11 +89,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
             }
-    /*
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-    */
     // Method to start the service
     public void startService(View view) {
         startService(new Intent(getBaseContext(), MyService.class));
