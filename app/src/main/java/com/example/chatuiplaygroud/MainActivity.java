@@ -14,13 +14,9 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.Menu;
 
-import android.content.Intent;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -47,10 +43,9 @@ public class MainActivity extends AppCompatActivity {
         });
         ChatView chatView = (ChatView) findViewById(R.id.chat_view);
         List<dev.langchain4j.data.message.ChatMessage> messageList = new ArrayList<>();
-        ChatMessage message1 = new ChatMessage("msg1", 12345678, ChatMessage.Type.SENT);
-        ChatMessage message2 = new ChatMessage("msg12", 12345679, ChatMessage.Type.RECEIVED);
-        chatView.addMessage(message1);
-        chatView.addMessage(message2);
+        String messageTextStart = "Welcome to use the education AI tool. Please paste the article and the test questions will appear.";
+        ChatMessage messageFirst = new ChatMessage(messageTextStart, new Date().getTime(), ChatMessage.Type.RECEIVED);
+        chatView.addMessage(messageFirst);
         Toast.makeText(getApplicationContext(), "start", Toast.LENGTH_LONG).show();
         executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -88,15 +83,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-            }
-    // Method to start the service
-    public void startService(View view) {
-        startService(new Intent(getBaseContext(), MyService.class));
-    }
-
-    // Method to stop the service
-    public void stopService(View view) {
-        stopService(new Intent(getBaseContext(), MyService.class));
     }
 }
 

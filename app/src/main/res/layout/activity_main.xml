@@ -26,23 +26,4 @@
         tools:layout_editor_absoluteX="-30dp"
         tools:layout_editor_absoluteY="0dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:text="启动服务"
-        android:onClick="startService"
-        tools:layout_editor_absoluteX="300dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="停止服务"
-        android:id="@+id/button"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="300dp"
-        android:onClick="stopService"
-        tools:ignore="MissingConstraints"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>
