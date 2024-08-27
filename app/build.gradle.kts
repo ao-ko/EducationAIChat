@@ -43,5 +43,6 @@ dependencies {
     implementation ("com.github.timigod:android-chat-ui:v0.1.4")
     implementation ("dev.langchain4j:langchain4j-open-ai:0.33.0")
     implementation ("dev.langchain4j:langchain4j:0.33.0")
+    implementation ("com.google.code.gson:gson:2.11.0")
 }
 
